@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Member
+from .models import ChatMessage, Member
 from .utils import hash_password
 
 
@@ -67,5 +67,26 @@ class MemberProfileSerializer(serializers.ModelSerializer):
 
         if queryset.exists():
             raise serializers.ValidationError("Username is already taken.")
+
+        return value
+
+
+class ChatMessageSerializer(serializers.ModelSerializer):
+    author_username = serializers.CharField(
+        source="author.username",
+        read_only=True,
+    )
+
+    class Meta:
+        model = ChatMessage
+        fields = ["id", "author_username", "text", "created_at"]
+        read_only_fields = ["id", "author_username", "created_at"]
+
+    def validate_text(self, value: str) -> str:
+        if value is None:
+            raise serializers.ValidationError("Text is required.")
+
+        if not value.strip():
+            raise serializers.ValidationError("Text must not be empty.")
 
         return value

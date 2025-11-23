@@ -1,5 +1,5 @@
 from django.utils import timezone
-from rest_framework import status
+from rest_framework import generics, status
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -7,8 +7,9 @@ from rest_framework.views import APIView
 from drf_spectacular.utils import extend_schema
 
 from .auth_utils import create_member_token
-from .models import Member
+from .models import ChatMessage, Member
 from .serializers import (
+    ChatMessageSerializer,
     LoginSerializer,
     MemberProfileSerializer,
     MessageSerializer,
@@ -102,3 +103,27 @@ class ProfileView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ChatMessageListCreateView(generics.ListCreateAPIView):
+    queryset = ChatMessage.objects.select_related("author").all()
+    serializer_class = ChatMessageSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = super().get_queryset().order_by("-created_at")
+        limit_param = self.request.query_params.get("limit")
+
+        if limit_param is not None:
+            try:
+                limit = int(limit_param)
+            except (TypeError, ValueError):
+                limit = None
+
+            if limit is not None and limit > 0:
+                queryset = queryset[:limit]
+
+        return queryset
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)

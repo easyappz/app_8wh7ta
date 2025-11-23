@@ -48,3 +48,21 @@ class MemberToken(models.Model):
 
     def __str__(self) -> str:  # pragma: no cover - simple representation
         return f"Token for member {self.member_id}"
+
+
+class ChatMessage(models.Model):
+    author = models.ForeignKey(
+        Member,
+        related_name="chat_messages",
+        on_delete=models.CASCADE,
+    )
+    text = models.TextField()
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self) -> str:  # pragma: no cover - simple representation
+        return f"Message {self.id} by member {self.author_id}"

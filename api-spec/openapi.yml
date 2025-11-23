@@ -152,6 +152,72 @@ paths:
               schema:
                 type: object
                 additionalProperties: true
+  /api/chat/messages:
+    get:
+      summary: Get list of group chat messages
+      operationId: listChatMessages
+      tags:
+        - chat
+      security:
+        - MemberTokenAuth: []
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          description: Maximum number of most recent messages to return.
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: List of chat messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChatMessage'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+    post:
+      summary: Send a new group chat message
+      operationId: createChatMessage
+      tags:
+        - chat
+      security:
+        - MemberTokenAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatMessageCreateRequest'
+      responses:
+        '201':
+          description: Chat message created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatMessage'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
 components:
   securitySchemes:
     MemberTokenAuth:
@@ -214,3 +280,28 @@ components:
           type: string
       required:
         - username
+    ChatMessage:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        author_username:
+          type: string
+        text:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - author_username
+        - text
+        - created_at
+    ChatMessageCreateRequest:
+      type: object
+      properties:
+        text:
+          type: string
+      required:
+        - text
