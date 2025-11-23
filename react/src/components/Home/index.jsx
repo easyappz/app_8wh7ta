@@ -1,13 +1,14 @@
 import React from 'react';
 
+import { ChatPage } from '../Chat/ChatPage';
+
 /**
- * Для ИИ: Это заглушка. Обнови этот компонент. Здесь должен быть главный групповой чат.
+ * Главная страница приложения использует компонент группового чата.
  */
 export const Home = () => {
   return (
-    <div data-easytag="id1-src/components/Home/index.jsx">
-      <h1>Групповой чат</h1>
-      <p>Здесь будет основной интерфейс группового чата.</p>
+    <div data-easytag="id1-src/components/Home/index.jsx" className="home-wrapper">
+      <ChatPage />
     </div>
   );
 };

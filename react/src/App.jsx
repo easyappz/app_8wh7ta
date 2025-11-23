@@ -4,7 +4,7 @@ import ErrorBoundary from './ErrorBoundary';
 import './App.css';
 
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { Home } from './components/Home';
+import { ChatPage } from './components/Chat/ChatPage';
 import { LoginPage } from './components/Auth/LoginPage';
 import { RegisterPage } from './components/Auth/RegisterPage';
 import { ProfilePage } from './components/Profile/ProfilePage';
@@ -43,13 +43,13 @@ function App() {
     <ErrorBoundary>
       <AuthProvider>
         <BrowserRouter>
-          <div data-easytag="id1-src/App.jsx">
+          <div data-easytag="id1-src/App.jsx" className="app-shell">
             <Routes>
               <Route
                 path="/"
                 element={
                   <PrivateRoute>
-                    <Home />
+                    <ChatPage />
                   </PrivateRoute>
                 }
               />
